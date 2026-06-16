@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Onde Locale - Web radio</title>
+    <meta
+      name="description"
+      content="Une interface de web radio locale avec stations, lecteur, grille de programmes, favoris et ajout de flux audio."
+    >
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23040607'/%3E%3Cg fill='%232fe0d1'%3E%3Crect x='12' y='24' width='6' height='16' rx='3'/%3E%3Crect x='23' y='14' width='6' height='36' rx='3'/%3E%3Crect x='34' y='8' width='6' height='48' rx='3'/%3E%3Crect x='45' y='20' width='6' height='24' rx='3'/%3E%3C/g%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-radio" viewBox="0 0 24 24">
+        <path d="M5 12a7 7 0 0 1 14 0"></path>
+        <path d="M8 12a4 4 0 0 1 8 0"></path>
+        <path d="M12 12v7"></path>
+        <path d="M9 19h6"></path>
+      </symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24">
+        <path d="M7 3v4"></path>
+        <path d="M17 3v4"></path>
+        <path d="M4 9h16"></path>
+        <rect x="4" y="5" width="16" height="16" rx="2"></rect>
+      </symbol>
+      <symbol id="icon-podcast" viewBox="0 0 24 24">
+        <circle cx="12" cy="11" r="3"></circle>
+        <path d="M7.5 17a7 7 0 1 1 9 0"></path>
+        <path d="M9.5 20a10 10 0 1 1 5 0"></path>
+        <path d="M11 14h2l1 7h-4z"></path>
+      </symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24">
+        <path d="M12 21s7-5.4 7-12a7 7 0 0 0-14 0c0 6.6 7 12 7 12z"></path>
+        <circle cx="12" cy="9" r="2.5"></circle>
+      </symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24">
+        <path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9.5" cy="7" r="4"></circle>
+        <path d="M22 20v-2a4 4 0 0 0-3-3.9"></path>
+        <path d="M16 3.2a4 4 0 0 1 0 7.6"></path>
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </symbol>
+      <symbol id="icon-bell" viewBox="0 0 24 24">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+        <path d="M10 21h4"></path>
+      </symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 21a8 8 0 0 1 16 0"></path>
+      </symbol>
+      <symbol id="icon-play" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"></path>
+      </symbol>
+      <symbol id="icon-pause" viewBox="0 0 24 24">
+        <path d="M8 5v14"></path>
+        <path d="M16 5v14"></path>
+      </symbol>
+      <symbol id="icon-heart" viewBox="0 0 24 24">
+        <path d="M20.8 5.6a5.4 5.4 0 0 0-7.6 0L12 6.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 22l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"></path>
+      </symbol>
+      <symbol id="icon-share" viewBox="0 0 24 24">
+        <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
+        <path d="M16 6l-4-4-4 4"></path>
+        <path d="M12 2v14"></path>
+      </symbol>
+      <symbol id="icon-more" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="1"></circle>
+        <circle cx="19" cy="12" r="1"></circle>
+        <circle cx="5" cy="12" r="1"></circle>
+      </symbol>
+      <symbol id="icon-volume" viewBox="0 0 24 24">
+        <path d="M4 9v6h4l5 4V5L8 9z"></path>
+        <path d="M16 8a5 5 0 0 1 0 8"></path>
+        <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+      </symbol>
+      <symbol id="icon-cast" viewBox="0 0 24 24">
+        <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14"></path>
+        <path d="M4 17a3 3 0 0 1 3 3"></path>
+        <path d="M4 13a7 7 0 0 1 7 7"></path>
+        <path d="M4 21h.01"></path>
+      </symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24">
+        <path d="M8 6h13"></path>
+        <path d="M8 12h13"></path>
+        <path d="M8 18h13"></path>
+        <path d="M3 6h.01"></path>
+        <path d="M3 12h.01"></path>
+        <path d="M3 18h.01"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14"></path>
+        <path d="M5 12h14"></path>
+      </symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24">
+        <path d="m9 18 6-6-6-6"></path>
+      </symbol>
+      <symbol id="icon-rewind" viewBox="0 0 24 24">
+        <path d="M11 18V6l-8 6z"></path>
+        <path d="M21 18V6l-8 6z"></path>
+      </symbol>
+      <symbol id="icon-forward" viewBox="0 0 24 24">
+        <path d="M13 6v12l8-6z"></path>
+        <path d="M3 6v12l8-6z"></path>
+      </symbol>
+    </svg>
+
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Onde Locale, accueil">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>Onde Locale</strong>
+          <small>La radio de chez nous</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navigation principale">
+        <button class="nav-button is-active" type="button" data-action="listen">
+          <svg><use href="#icon-radio"></use></svg>
+          Ecouter
+        </button>
+        <button class="nav-button" type="button" data-action="programs">
+          <svg><use href="#icon-calendar"></use></svg>
+          Programmes
+        </button>
+        <button class="nav-button" type="button" data-action="podcasts">
+          <svg><use href="#icon-podcast"></use></svg>
+          Podcasts
+        </button>
+        <button class="nav-button" type="button" data-action="local">
+          <svg><use href="#icon-pin"></use></svg>
+          Infos locales
+        </button>
+        <button class="nav-button" type="button" data-action="about">
+          <svg><use href="#icon-users"></use></svg>
+          Qui sommes-nous
+        </button>
+      </nav>
+
+      <div class="topbar-actions">
+        <label class="search-field">
+          <svg><use href="#icon-search"></use></svg>
+          <span class="sr-only">Rechercher une station ou une emission</span>
+          <input id="globalSearch" type="search" autocomplete="off" placeholder="Rechercher...">
+          <kbd>Ctrl K</kbd>
+        </label>
+        <button class="icon-button" type="button" id="notifyButton" aria-label="Notifications">
+          <svg><use href="#icon-bell"></use></svg>
+        </button>
+        <button class="studio-button" type="button" id="studioButton">
+          <svg><use href="#icon-user"></use></svg>
+          Studio
+          <svg class="chevron"><use href="#icon-chevron"></use></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="radio-layout">
+      <aside class="station-rail" aria-label="Stations disponibles">
+        <div class="rail-section">
+          <div class="section-heading">
+            <h2>Nos stations</h2>
+          </div>
+          <div class="station-list" id="stationList"></div>
+        </div>
+
+        <div class="rail-section">
+          <div class="section-heading">
+            <h2>Favoris</h2>
+            <button type="button" class="text-button" id="manageFavorites">Gerer</button>
+          </div>
+          <div class="favorite-list" id="favoriteList"></div>
+        </div>
+
+        <form class="add-station-form" id="addStationForm" aria-label="Ajouter une station">
+          <div class="form-head">
+            <strong>Ajouter une station</strong>
+            <span>Collez l'URL d'un flux MP3, AAC ou HLS.</span>
+          </div>
+          <label>
+            Nom de la station
+            <input type="text" name="name" placeholder="Radio quartier" required>
+          </label>
+          <label>
+            URL du flux
+            <input type="url" name="url" placeholder="https://..." required>
+          </label>
+          <label>
+            Ville ou region
+            <input type="text" name="city" placeholder="Saint-Denis">
+          </label>
+          <button class="primary-action" type="submit">
+            <svg><use href="#icon-plus"></use></svg>
+            Ajouter
+          </button>
+        </form>
+      </aside>
+
+      <section class="player-area" aria-label="Lecteur principal">
+        <article class="live-panel" id="livePanel">
+          <div class="now-header">
+            <div class="station-cover" id="stationCover" aria-hidden="true">
+              <span class="cover-wave"></span>
+              <strong id="coverLabel">OL</strong>
+            </div>
+            <div class="now-copy">
+              <div class="live-line">
+                <span class="live-chip">En direct</span>
+                <span id="stationMeta">Onde Locale - 101.2 FM - Lille Metropole</span>
+              </div>
+              <h1 id="programTitle">Matin Local</h1>
+              <p id="hostLine">avec Claire & Max</p>
+              <p class="time-window" id="programTime">07:00 - 10:00</p>
+              <div class="action-row">
+                <button class="primary-action play-inline" type="button" id="inlinePlay">
+                  <svg><use href="#icon-play"></use></svg>
+                  <span>Ecouter</span>
+                </button>
+                <button class="ghost-action" type="button" id="favoriteButton">
+                  <svg><use href="#icon-heart"></use></svg>
+                  Favori
+                </button>
+                <button class="ghost-action" type="button" id="shareButton">
+                  <svg><use href="#icon-share"></use></svg>
+                  Partager
+                </button>
+                <button class="icon-button ghost-icon" type="button" id="moreButton" aria-label="Plus d'options">
+                  <svg><use href="#icon-more"></use></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="wave-wrap" aria-label="Visualisation du flux en direct">
+            <canvas id="waveCanvas"></canvas>
+            <div class="timeline-row">
+              <span id="elapsedTime">01:23:45</span>
+              <span class="live-tag">En direct</span>
+            </div>
+          </div>
+
+          <div class="control-deck">
+            <label class="volume-control">
+              <svg><use href="#icon-volume"></use></svg>
+              <span class="sr-only">Volume</span>
+              <input id="volumeRange" type="range" min="0" max="100" value="64">
+            </label>
+            <button class="round-control" type="button" id="rewindButton" aria-label="Reculer de 10 secondes">
+              <svg><use href="#icon-rewind"></use></svg>
+              <span>10</span>
+            </button>
+            <button class="main-play" type="button" id="mainPlayButton" aria-label="Lancer la lecture">
+              <svg><use href="#icon-play"></use></svg>
+            </button>
+            <button class="round-control" type="button" id="forwardButton" aria-label="Avancer de 10 secondes">
+              <svg><use href="#icon-forward"></use></svg>
+              <span>10</span>
+            </button>
+            <button class="text-quality" type="button" id="qualityButton">HQ</button>
+            <button class="icon-button ghost-icon" type="button" id="castButton" aria-label="Caster le direct">
+              <svg><use href="#icon-cast"></use></svg>
+            </button>
+            <button class="icon-button ghost-icon" type="button" id="queueButton" aria-label="Afficher la liste">
+              <svg><use href="#icon-list"></use></svg>
+            </button>
+          </div>
+
+          <dl class="stats-row" id="statsRow"></dl>
+        </article>
+
+        <section class="schedule-section" id="scheduleSection" aria-labelledby="scheduleTitle">
+          <div class="section-title-row">
+            <div>
+              <h2 id="scheduleTitle">Grille des programmes</h2>
+              <p>Aujourd'hui, selection locale</p>
+            </div>
+            <button class="ghost-action compact" type="button" id="fullSchedule">
+              Voir la grille complete
+              <svg><use href="#icon-chevron"></use></svg>
+            </button>
+          </div>
+          <div class="schedule-grid" id="scheduleGrid"></div>
+        </section>
+
+        <section class="spotlight-section" id="spotlightSection" aria-labelledby="spotlightTitle">
+          <div class="section-title-row">
+            <div>
+              <h2 id="spotlightTitle">A ne pas manquer</h2>
+              <p>Selections de la redaction et rendez-vous antenne.</p>
+            </div>
+            <button class="text-button" type="button" id="seeAllSpotlights">Voir tout</button>
+          </div>
+          <div class="spotlight-grid" id="spotlightGrid"></div>
+        </section>
+      </section>
+
+      <aside class="queue-panel" aria-label="En ce moment">
+        <div class="section-heading">
+          <h2>En ce moment</h2>
+          <span class="signal-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+        <div class="track-list" id="trackList"></div>
+
+        <section class="call-in-panel" aria-labelledby="callInTitle">
+          <h2 id="callInTitle">Reagissez a l'antenne</h2>
+          <a href="tel:+33320XXXXXX">
+            <svg><use href="#icon-radio"></use></svg>
+            <span>03 20 XX XX XX</span>
+            <small>En direct</small>
+          </a>
+          <a href="sms:+3371012">
+            <svg><use href="#icon-share"></use></svg>
+            <span>Envoyez un message</span>
+            <small>SMS au 7 10 12</small>
+          </a>
+          <a href="#" id="whatsappLink">
+            <svg><use href="#icon-users"></use></svg>
+            <span>WhatsApp</span>
+            <small>07 XX XX XX XX</small>
+          </a>
+        </section>
+      </aside>
+    </main>
+
+    <div class="mini-player" aria-label="Lecteur compact">
+      <div class="mini-station">
+        <div class="mini-cover" id="miniCover" aria-hidden="true"></div>
+        <div>
+          <strong id="miniTitle">Matin Local</strong>
+          <span id="miniSubtitle">avec Claire & Max - 07:00 - 10:00</span>
+        </div>
+        <span class="mini-live">En direct</span>
+      </div>
+      <div class="mini-controls">
+        <button class="round-control small" type="button" id="miniRewind" aria-label="Reculer de 10 secondes">
+          <svg><use href="#icon-rewind"></use></svg>
+        </button>
+        <button class="main-play small" type="button" id="miniPlay" aria-label="Lancer la lecture">
+          <svg><use href="#icon-play"></use></svg>
+        </button>
+        <button class="round-control small" type="button" id="miniForward" aria-label="Avancer de 10 secondes">
+          <svg><use href="#icon-forward"></use></svg>
+        </button>
+      </div>
+      <label class="volume-control mini-volume">
+        <svg><use href="#icon-volume"></use></svg>
+        <span class="sr-only">Volume compact</span>
+        <input id="miniVolumeRange" type="range" min="0" max="100" value="64">
+      </label>
+      <button class="icon-button ghost-icon" type="button" id="collapseMini" aria-label="Replier le lecteur">
+        <svg class="chevron-up"><use href="#icon-chevron"></use></svg>
+      </button>
+    </div>
+
+    <audio id="streamAudio" crossorigin="anonymous"></audio>
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
