@@ -23,19 +23,37 @@
     </nav>
     <div class="rule"></div>
 
+    <div class="ticker" aria-hidden="true">
+      <span class="ticker-flag"><i class="blink"></i>En direct</span>
+      <div class="ticker-viewport">
+        <div class="ticker-track">
+          <span class="ticker-item"><em>Population</em><b class="counter" data-mode="abs" data-base="895800" data-rate-year="5100">—</b></span>
+          <span class="ticker-item"><em>Naissances cette année</em><b class="counter" data-mode="year" data-rate-year="12600">—</b></span>
+          <span class="ticker-item"><em>Décès cette année</em><b class="counter" data-mode="year" data-rate-year="5700">—</b></span>
+          <span class="ticker-item"><em>Richesse produite cette année</em><b><span class="counter" data-mode="year" data-rate-year="22400000000">—</span> €</b></span>
+          <span class="ticker-item"><em>Électricité aujourd'hui</em><b><span class="counter" data-mode="day" data-rate-year="3050000000">—</span> kWh</b></span>
+          <span class="ticker-item"><em>Eau distribuée aujourd'hui</em><b><span class="counter" data-mode="day" data-rate-year="110000000000">—</span> L</b></span>
+          <span class="ticker-item"><em>CO₂ cette année</em><b><span class="counter" data-mode="year" data-rate-year="4200000">—</span> t</b></span>
+          <span class="ticker-item"><em>Touristes cette année</em><b class="counter" data-mode="year" data-rate-year="500000">—</b></span>
+          <span class="ticker-item"><em>Entreprises créées cette année</em><b class="counter" data-mode="year" data-rate-year="8200">—</b></span>
+          <span class="ticker-item"><em>Déchets aujourd'hui</em><b><span class="counter" data-mode="day" data-rate-year="550000000">—</span> kg</b></span>
+        </div>
+      </div>
+    </div>
+
     <header class="hero">
+      <div class="hero-grid">
       <div>
         <span class="kicker"><i class="blink"></i>Compteurs en direct · Estimations</span>
         <h1>La Réunion<span>en chiffres.</span></h1>
         <p class="hero-lede">
-          La démographie, l'économie, l'énergie et le territoire de l'île, extrapolés
-          seconde par seconde à partir des dernières moyennes annuelles publiées.
-          Le compteur mondial, à l'échelle 974.
+          Pendant que vous lisez ces lignes, l'île naît, travaille, consomme et grandit.
+          Chaque compteur de cette page avance en continu, calé sur les moyennes
+          officielles — la mesure du monde, ramenée aux 2 512 km² du 974.
         </p>
-        <div class="hero-pop">
-          <span class="hero-pop-label">Population actuelle (estimation)</span>
-          <span class="hero-pop-value counter" data-mode="abs" data-base="895800" data-rate-year="5100">—</span>
-          <span class="hero-pop-note">≈ +1 habitant toutes les 103 minutes · d'après le bilan démographique INSEE</span>
+        <div class="hero-next">
+          <span class="hero-next-label">Prochaine naissance estimée dans</span>
+          <span class="hero-next-value countdown" data-rate-year="12600">—</span>
         </div>
       </div>
 
@@ -48,6 +66,43 @@
         </svg>
         <figcaption><span>Saint-Denis · 20°52′ S — 55°27′ E</span><span>Océan Indien</span></figcaption>
       </figure>
+      </div>
+
+      <div class="board">
+        <div class="board-main">
+          <div>
+            <span class="board-label">Habitants en ce moment (estimation)</span>
+            <span class="board-value counter" data-mode="abs" data-base="895800" data-rate-year="5100">—</span>
+          </div>
+          <div class="board-side">
+            <span>≈ +1 habitant toutes les <b>103 min</b></span>
+            <span>Solde naturel <b>+6 900 / an</b> · migratoire <b>−1 800 / an</b></span>
+            <span>D'après le bilan démographique INSEE</span>
+          </div>
+        </div>
+        <div class="board-tiles">
+          <div class="board-tile">
+            <span class="board-tile-label">Naissances aujourd'hui</span>
+            <span class="board-tile-value counter" data-mode="day" data-rate-year="12600">—</span>
+            <span class="board-tile-note">≈ 1 toutes les 42 min</span>
+          </div>
+          <div class="board-tile">
+            <span class="board-tile-label">Décès aujourd'hui</span>
+            <span class="board-tile-value counter" data-mode="day" data-rate-year="5700">—</span>
+            <span class="board-tile-note">≈ 1 toutes les 92 min</span>
+          </div>
+          <div class="board-tile">
+            <span class="board-tile-label">Richesse produite aujourd'hui (€)</span>
+            <span class="board-tile-value counter" data-mode="day" data-rate-year="22400000000">—</span>
+            <span class="board-tile-note">≈ 710 € chaque seconde</span>
+          </div>
+          <div class="board-tile">
+            <span class="board-tile-label">Électricité aujourd'hui (kWh)</span>
+            <span class="board-tile-value counter" data-mode="day" data-rate-year="3050000000">—</span>
+            <span class="board-tile-note">≈ 97 kWh chaque seconde</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="rule"></div>
@@ -88,11 +143,12 @@
           </table>
         </div>
 
+        <div class="facts-title">Repères</div>
         <div class="facts">
           <div class="fact">
-            <span class="fact-label">Densité</span>
-            <span class="fact-value">356 hab/km²</span>
-            <span class="fact-note">3× la moyenne nationale</span>
+            <span class="fact-label">Densité (hab/km²)</span>
+            <span class="fact-value"><span class="counter" data-mode="abs" data-base="356.6" data-rate-year="2.03" data-decimals="1">—</span></span>
+            <span class="fact-note">en direct — 3× la moyenne nationale</span>
           </div>
           <div class="fact">
             <span class="fact-label">Âge médian</span>
@@ -133,6 +189,14 @@
         <div class="live-grid">
           <div class="live-card">
             <div class="live-card-head">
+              <span class="live-card-label">Richesse produite cette année (€)</span>
+              <span class="live-badge"><i></i>Direct</span>
+            </div>
+            <span class="live-card-value counter" data-mode="year" data-rate-year="22400000000">0</span>
+            <span class="live-card-note">≈ 710 € chaque seconde — 1er PIB des outre-mer</span>
+          </div>
+          <div class="live-card">
+            <div class="live-card-head">
               <span class="live-card-label">Entreprises créées cette année</span>
               <span class="live-badge"><i></i>Direct</span>
             </div>
@@ -147,14 +211,18 @@
             <span class="live-card-value counter" data-mode="year" data-rate-year="500000">0</span>
             <span class="live-card-note">≈ 1 arrivée par minute, moyenne annuelle</span>
           </div>
+          <div class="live-card">
+            <div class="live-card-head">
+              <span class="live-card-label">Passagers aériens cette année</span>
+              <span class="live-badge"><i></i>Direct</span>
+            </div>
+            <span class="live-card-value counter" data-mode="year" data-rate-year="2600000">0</span>
+            <span class="live-card-note">≈ 5 par minute — Roland-Garros et Pierrefonds</span>
+          </div>
         </div>
 
+        <div class="facts-title">Repères</div>
         <div class="facts">
-          <div class="fact">
-            <span class="fact-label">PIB</span>
-            <span class="fact-value">22,4 Mds €</span>
-            <span class="fact-note">1er PIB des outre-mer</span>
-          </div>
           <div class="fact">
             <span class="fact-label">PIB par habitant</span>
             <span class="fact-value">≈ 25 500 €</span>
@@ -192,11 +260,27 @@
           </div>
           <div class="live-card">
             <div class="live-card-head">
+              <span class="live-card-label">Solaire produit aujourd'hui (kWh)</span>
+              <span class="live-badge"><i></i>Direct</span>
+            </div>
+            <span class="live-card-value counter" data-mode="day" data-rate-year="300000000">0</span>
+            <span class="live-card-note">≈ 10 % du mix électrique de l'île</span>
+          </div>
+          <div class="live-card">
+            <div class="live-card-head">
               <span class="live-card-label">Eau potable distribuée aujourd'hui (litres)</span>
               <span class="live-badge"><i></i>Direct</span>
             </div>
             <span class="live-card-value counter" data-mode="day" data-rate-year="110000000000">0</span>
-            <span class="live-card-note">≈ 3 500 litres chaque seconde</span>
+            <span class="live-card-note">≈ une piscine olympique toutes les 12 min</span>
+          </div>
+          <div class="live-card">
+            <div class="live-card-head">
+              <span class="live-card-label">Carburants consommés aujourd'hui (litres)</span>
+              <span class="live-badge"><i></i>Direct</span>
+            </div>
+            <span class="live-card-value counter" data-mode="day" data-rate-year="630000000">0</span>
+            <span class="live-card-note">essence + gazole routiers · ≈ 20 L chaque seconde</span>
           </div>
           <div class="live-card">
             <div class="live-card-head">
@@ -204,7 +288,7 @@
               <span class="live-badge"><i></i>Direct</span>
             </div>
             <span class="live-card-value counter" data-mode="day" data-rate-year="550000000">0</span>
-            <span class="live-card-note">≈ 17 kg chaque seconde</span>
+            <span class="live-card-note">≈ le poids d'un long-courrier toutes les 4 h 30</span>
           </div>
           <div class="live-card">
             <div class="live-card-head">
@@ -216,6 +300,7 @@
           </div>
         </div>
 
+        <div class="facts-title">Repères</div>
         <div class="facts">
           <div class="fact">
             <span class="fact-label">Électricité renouvelable</span>
