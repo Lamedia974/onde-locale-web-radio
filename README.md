@@ -1,20 +1,16 @@
-# Onde Locale - Web radio
+# Onde Locale & Alerte Infos Réunion
 
-Interface statique de web radio locale avec stations, lecteur live, favoris, recherche, grille de programmes et ajout de flux audio.
+Site statique sans étape de build, en deux univers reliés :
 
-## Alerte Infos — La carte du 974
+| Page | URL | Rôle |
+| --- | --- | --- |
+| Web radio Onde Locale | `/` | Stations péi, lecteur live, favoris, programmes |
+| Accueil Alerte Infos | `/alerte-infos/` | Landing de l'appli : fonctionnalités, téléchargement, accès aux modules |
+| La Réunion en chiffres | `/alerte-infos/chiffres.html` | Tableau de bord bento en temps réel (compteurs, odomètres, animations) |
+| La carte du 974 | `/alerte-infos/carte.html` | Carte interactive open data (sentiers GR, toilettes, eau, équipements) |
 
-`alerte-infos/carte.html` : carte interactive open data de La Réunion (Leaflet vendorisé,
-fond OpenStreetMap). Couches : 42 sentiers de randonnée dont les GR R1/R2/R3, toilettes
-publiques, points d'eau potable, aires de pique-nique, mairies, hôpitaux/cliniques, écoles —
-soit ~1 460 lieux extraits d'OpenStreetMap (licence ODbL) via l'API Overpass et embarqués
-en GeoJSON dans `alerte-infos/data/` (368 Ko). Pour régénérer les données, rejouer les
-requêtes Overpass (`route=hiking`, `amenity=toilets|drinking_water|townhall|hospital|clinic|school`,
-`tourism=picnic_site` sur la bbox −21.42,55.20,−20.83,55.90).
-
-## Alerte Infos — La Réunion en chiffres
-
-`alerte-infos/chiffres.html` : page de statistiques en temps réel façon Worldometers à l'échelle de La Réunion (population, naissances, économie, énergie, territoire). Les compteurs extrapolent des moyennes annuelles publiées (INSEE, etc.) — ce sont des estimations, pas des mesures. Design repris du bundle Claude Design `splashscreen-alerte-r-union/` (système Modernist : Archivo, accent #ec3013, zéro arrondi, règles 2px).
+La navigation est croisée : la radio pointe vers Alerte Infos (« Alerte Infos » dans le
+menu), et chaque page Alerte Infos relie l'accueil, les chiffres, la carte et la radio.
 
 ## Lancer en local
 
@@ -22,12 +18,42 @@ requêtes Overpass (`route=hiking`, `amenity=toilets|drinking_water|townhall|hos
 python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
-Puis ouvrir `http://127.0.0.1:4173/`.
+Puis ouvrir `http://127.0.0.1:4173/`. (La carte charge ses GeoJSON en `fetch` :
+il faut un serveur HTTP, pas un simple `file://`.)
 
-## Deploiement Netlify
+## Déploiement Netlify
 
-Le projet est un site statique sans etape de build.
+Site statique sans build.
 
-- Build command: vide
-- Publish directory: `.`
+- Build command : vide
+- Publish directory : `.`
+- `netlify.toml` ajoute les en-têtes de sécurité et le cache des données/vendors.
 
+## SEO
+
+- `robots.txt` et `sitemap.xml` à la racine — **remplacer le domaine**
+  `onde-locale-web-radio.netlify.app` par le domaine réel si différent.
+- Chaque page porte title/description uniques, Open Graph, `theme-color` et des
+  données structurées JSON-LD (RadioStation, SoftwareApplication, Dataset).
+- Archivo est chargée via `preconnect` + `<link>` (pas d'`@import` bloquant).
+
+## Données de la carte
+
+`alerte-infos/data/*.geojson` (~390 Ko) : extraits d'OpenStreetMap (licence ODbL) via
+l'API Overpass — 42 itinéraires `route=hiking` (dont GR R1/R2/R3, simplifiés
+Douglas-Peucker ~9 m), toilettes publiques, eau potable, aires de pique-nique, mairies,
+santé, écoles (bbox −21.42,55.20,−20.83,55.90), plus le littoral du département
+(`ile.geojson`) qui sert de fond quand les tuiles OSM ne répondent pas.
+Leaflet 1.9.4 et Leaflet.markercluster sont vendorisés dans `alerte-infos/vendor/`.
+
+## Chiffres du tableau de bord
+
+Les compteurs extrapolent des moyennes annuelles publiées (INSEE, douane, CAF,
+Observatoire Énergie Réunion…) — estimations lissées, pas des mesures. Les taux sont
+des attributs `data-rate-year` dans `alerte-infos/chiffres.html`, faciles à mettre à jour.
+
+## Design
+
+Design system « Modernist » du bundle Claude Design `splashscreen-alerte-r-union/`
+(Archivo, accent #ec3013, règles 2 px), assoupli en grille bento arrondie. Le bundle
+reste la référence maquette ; les pages de production vivent dans `alerte-infos/`.

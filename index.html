@@ -3,11 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Onde Locale - Web radio</title>
+    <title>Onde Locale — La web radio de La Réunion</title>
     <meta
       name="description"
-      content="Une interface de web radio locale avec stations, lecteur, grille de programmes, favoris et ajout de flux audio."
+      content="Onde Locale, la web radio de La Réunion : stations péi en direct, favoris, grille des programmes et podcasts. Avec Alerte Infos, les chiffres et la carte open data du 974."
     >
+    <meta name="theme-color" content="#040607">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Onde Locale">
+    <meta property="og:title" content="Onde Locale — La web radio de La Réunion">
+    <meta property="og:description" content="Stations péi en direct, favoris, programmes et podcasts — la radio de chez nous, avec Alerte Infos Réunion.">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RadioStation",
+      "name": "Onde Locale",
+      "slogan": "La radio de chez nous",
+      "description": "Web radio locale de La Réunion : stations, lecteur en direct, favoris, grille des programmes.",
+      "areaServed": { "@type": "AdministrativeArea", "name": "La Réunion" }
+    }
+    </script>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23040607'/%3E%3Cg fill='%232fe0d1'%3E%3Crect x='12' y='24' width='6' height='16' rx='3'/%3E%3Crect x='23' y='14' width='6' height='36' rx='3'/%3E%3Crect x='34' y='8' width='6' height='48' rx='3'/%3E%3Crect x='45' y='20' width='6' height='24' rx='3'/%3E%3C/g%3E%3C/svg%3E">
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -133,10 +150,10 @@
           <svg><use href="#icon-podcast"></use></svg>
           Podcasts
         </button>
-        <button class="nav-button" type="button" data-action="local">
+        <a class="nav-button" href="alerte-infos/">
           <svg><use href="#icon-pin"></use></svg>
-          Infos locales
-        </button>
+          Alerte Infos
+        </a>
         <button class="nav-button" type="button" data-action="about">
           <svg><use href="#icon-users"></use></svg>
           Qui sommes-nous

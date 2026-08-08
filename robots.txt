@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://onde-locale-web-radio.netlify.app/sitemap.xml
