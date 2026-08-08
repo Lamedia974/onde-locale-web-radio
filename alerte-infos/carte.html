@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>La carte du 974 — Alerte Infos</title>
+    <meta
+      name="description"
+      content="Sentiers de randonnée, GR R1/R2/R3, toilettes publiques, eau potable, mairies, santé : la carte open data de La Réunion."
+    >
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23ec3013'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial, sans-serif' font-weight='800' font-size='26' fill='white'%3EAI%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="vendor/leaflet.css">
+    <link rel="stylesheet" href="vendor/markercluster.css">
+    <link rel="stylesheet" href="carte.css">
+  </head>
+  <body>
+
+    <nav class="topbar">
+      <span class="brand-mark">AI</span>
+      <span class="brand-name">Alerte Infos <em>Réunion</em> · Carte</span>
+      <a class="topbar-link" href="chiffres.html">Chiffres</a>
+      <a href="chiffres.html#dl" class="topbar-cta">Télécharger</a>
+    </nav>
+    <div class="rule"></div>
+
+    <header class="map-head">
+      <div>
+        <span class="kicker"><i></i>Open data · OpenStreetMap</span>
+        <h1>La carte <span>du 974.</span></h1>
+        <p>
+          Les sentiers de l'île — GR R1, R2, R3 et boucles locales — avec les
+          toilettes publiques, points d'eau potable, aires de pique-nique,
+          mairies, hôpitaux et écoles. Cochez les couches, zoomez, partez.
+        </p>
+      </div>
+      <div class="head-chips">
+        <span class="chip"><b>42</b> sentiers</span>
+        <span class="chip"><b>216</b> toilettes</span>
+        <span class="chip"><b>259</b> points d'eau</span>
+        <span class="chip"><b>1 419</b> lieux au total</span>
+      </div>
+    </header>
+
+    <div class="map-shell">
+      <aside class="layers-panel">
+        <div class="layers-title">Couches <b id="total-count">…</b></div>
+        <div id="layers-rows"></div>
+        <button id="locate" class="locate-btn" type="button">Ma position</button>
+      </aside>
+      <div id="map" aria-label="Carte interactive de La Réunion"></div>
+    </div>
+
+    <div class="sources">
+      <b>Sources.</b> Données © les contributeurs
+      <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, sous licence ODbL,
+      extraites via l'API Overpass (sentiers : relations « route=hiking », dont les GR R1, R2 et R3 ;
+      équipements : toilettes publiques, eau potable, aires de pique-nique, mairies, hôpitaux
+      et cliniques, écoles). Les fichiers GeoJSON sont embarqués dans le site et peuvent être
+      régénérés à tout moment. Fond de carte OpenStreetMap.
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <span class="footer-brand">
+          <i>AI</i>
+          <span><a href="/">Alerte Infos Réunion — Un service Onde Locale</a></span>
+        </span>
+        <a href="chiffres.html">Chiffres</a>
+        <a href="#">Conditions d'utilisation</a>
+        <a href="#">Confidentialité</a>
+        <span class="footer-copy">© 2026 · 974</span>
+      </div>
+    </footer>
+
+    <script src="vendor/leaflet.js"></script>
+    <script src="vendor/leaflet.markercluster.js"></script>
+    <script src="carte.js"></script>
+  </body>
+</html>

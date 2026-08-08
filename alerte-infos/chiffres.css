@@ -90,6 +90,11 @@ a:hover { color: var(--color-accent); }
 }
 .topbar-clock .blink { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); animation: om-blink 1.6s ease-in-out infinite; }
 .topbar-clock small { font-size: 9px; font-weight: 700; letter-spacing: .1em; color: var(--color-neutral-500); }
+.topbar-link {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--color-neutral-600);
+  padding: 10px 2px;
+}
 .topbar-cta {
   background: var(--color-accent); color: #fff;
   font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
