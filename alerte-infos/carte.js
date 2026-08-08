@@ -13,11 +13,27 @@
     zoomControl: true
   });
 
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }).addTo(map);
+  // Fond de tuiles OSM — désactivable (aperçus hors ligne / artifacts).
+  let tiles = null;
+  let tilesLoaded = false;
+  if (!window.CARTE_NO_TILES) {
+    tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+  }
   L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+
+  // La carte s'affiche toujours : le littoral réel de l'île sert de fond de
+  // secours (île blanche cerclée d'encre, façon Modernist). Dès que les
+  // tuiles OSM répondent, l'île s'efface pour laisser voir le terrain.
+  map.createPane('ile');
+  map.getPane('ile').style.zIndex = 250;
+  let ileLayer = null;
+  const ghostIle = () => {
+    if (ileLayer && tilesLoaded) ileLayer.setStyle({ fillOpacity: 0, opacity: .4, weight: 1.5 });
+  };
+  if (tiles) tiles.once('tileload', () => { tilesLoaded = true; ghostIle(); });
 
   // Un seul canvas pour ~1 400 points : fluide même sur mobile.
   const canvas = L.canvas({ padding: .3 });
@@ -81,14 +97,32 @@
     });
   }
 
+  // Données : soit injectées dans la page (window.CARTE_DATA), soit chargées
+  // depuis data/*.geojson.
+  const getData = (name) => {
+    if (window.CARTE_DATA) {
+      return window.CARTE_DATA[name]
+        ? Promise.resolve(window.CARTE_DATA[name])
+        : Promise.reject(new Error('absent'));
+    }
+    return fetch(`data/${name}.geojson`).then((r) => {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  };
+
+  getData('ile').then((gj) => {
+    ileLayer = L.geoJSON(gj, {
+      pane: 'ile',
+      interactive: false,
+      style: { color: '#201e1d', weight: 2, fillColor: '#ffffff', fillOpacity: 1 }
+    }).addTo(map);
+    ghostIle();
+  }).catch(() => {});
+
   async function load() {
     const names = Object.keys(LAYERS);
-    const results = await Promise.allSettled(
-      names.map((n) => fetch(`data/${n}.geojson`).then((r) => {
-        if (!r.ok) throw new Error(r.status);
-        return r.json();
-      }))
-    );
+    const results = await Promise.allSettled(names.map(getData));
     results.forEach((res, i) => {
       const name = names[i];
       const def = LAYERS[name];
