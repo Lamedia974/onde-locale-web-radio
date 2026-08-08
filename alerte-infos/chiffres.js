@@ -2,13 +2,14 @@
    Chaque compteur extrapole une moyenne annuelle publiée (voir la note de
    sources dans la page) : ce sont des estimations lissées, pas des mesures.
 
-   .counter   data-rate-year : unités par an
-              data-mode      : "day"  → cumul depuis minuit (heure de La Réunion)
-                               "year" → cumul depuis le 1er janvier
-                               "abs"  → data-base + cumul depuis le 1er janvier 2026
-              data-decimals  : décimales affichées (défaut 0)
-              data-unit      : unité affichée dans le « +N » flottant
-   .countdown data-rate-year : temps estimé avant le prochain événement */
+   .counter     data-rate-year : unités par an
+                data-mode      : "day"  → cumul depuis minuit (heure de La Réunion)
+                                 "year" → cumul depuis le 1er janvier
+                                 "abs"  → data-base + cumul depuis le 1er janvier 2026
+                data-decimals  : décimales affichées (défaut 0)
+                data-unit      : unité affichée dans le « +N » flottant
+   .countdown   data-rate-year : temps estimé avant le prochain événement
+   .meter-fill  data-rate-year : progression vers le prochain événement */
 (() => {
   'use strict';
 
@@ -22,6 +23,8 @@
   // Un « +N » flottant au plus tous les 700 ms par compteur, 24 à l'écran max.
   const POP_INTERVAL_MS = 700;
   const POP_MAX_ONSCREEN = 24;
+  // Décollage des compteurs : montée de 0 à la valeur réelle en 1,1 s.
+  const INTRO_MS = 1100;
 
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -44,6 +47,11 @@
   const track = document.querySelector('.ticker-track');
   if (track) track.innerHTML = track.innerHTML.repeat(4);
 
+  // Les grandes valeurs roulent comme un odomètre.
+  document.querySelectorAll('.cell-big, .cell-value, .live-card-value').forEach(
+    (el) => el.classList.contains('counter') && el.classList.add('odo')
+  );
+
   const rawValue = (mode, base, ratePerMs, now) => {
     if (mode === 'day') return (now - startOfDay(now)) * ratePerMs;
     if (mode === 'abs') return base + (now - BASE_EPOCH) * ratePerMs;
@@ -59,6 +67,10 @@
     unit: el.dataset.unit || '',
     flash: Number(el.dataset.rateYear) < TICK_FLASH_MAX_RATE,
     pops: !el.closest('.ticker'),
+    odo: el.classList.contains('odo'),
+    odoKey: null,
+    odoStrips: null,
+    introStart: el.closest('.ticker') ? 0 : null, // 0 = décollage déjà fini
     value: null,
     shown: null,
     accum: 0,
@@ -72,9 +84,53 @@
     shown: null
   }));
 
-  const pad = (n) => String(n).padStart(2, '0');
+  const meters = Array.from(document.querySelectorAll('.meter-fill')).map((el) => ({
+    el,
+    ratePerMs: Number(el.dataset.rateYear) / YEAR_MS
+  }));
 
-  // « +N » flottant : la petite récompense visuelle à chaque incrément.
+  const pad = (n) => String(n).padStart(2, '0');
+  const easeOut = (t) => 1 - (1 - t) ** 3;
+
+  /* — odomètre à rouleaux : chaque chiffre glisse vers sa nouvelle valeur — */
+  function renderOdo(c, str) {
+    const key = str.replace(/\d/g, '0');
+    if (c.odoKey !== key) {
+      c.el.textContent = '';
+      c.odoStrips = [];
+      for (const ch of str) {
+        if (/\d/.test(ch)) {
+          const d = document.createElement('span');
+          d.className = 'odo-d';
+          const strip = document.createElement('span');
+          strip.className = 'odo-strip';
+          for (let i = 0; i <= 9; i++) {
+            const n = document.createElement('span');
+            n.textContent = String(i);
+            strip.appendChild(n);
+          }
+          strip.style.transform = `translateY(-${ch}em)`;
+          d.appendChild(strip);
+          c.el.appendChild(d);
+          c.odoStrips.push(strip);
+        } else {
+          const s = document.createElement('span');
+          s.className = 'odo-s';
+          s.textContent = ch;
+          c.el.appendChild(s);
+          c.odoStrips.push(null);
+        }
+      }
+      c.odoKey = key;
+      return;
+    }
+    for (let i = 0; i < str.length; i++) {
+      const strip = c.odoStrips[i];
+      if (strip) strip.style.transform = `translateY(-${str[i]}em)`;
+    }
+  }
+
+  /* — « +N » flottant : la petite récompense visuelle à chaque incrément — */
   function spawnPop(c, delta, now) {
     if (reduceMotion || document.hidden) { c.accum = 0; return; }
     if (now - c.lastPop < POP_INTERVAL_MS) return;
@@ -83,7 +139,7 @@
     if (rect.bottom < 0 || rect.top > innerHeight) { c.accum = 0; return; }
     const pop = document.createElement('span');
     pop.className = 'tick-pop';
-    pop.textContent = `+${fmt(delta, 0)}${c.unit ? ' ' + c.unit : ''}`;
+    pop.textContent = `+${fmt(delta, 0)}${c.unit ? ' ' + c.unit : ''}`;
     const x = Math.min(rect.right + 6 + (Math.random() * 14 - 7), innerWidth - 72);
     pop.style.left = `${Math.max(8, x)}px`;
     pop.style.top = `${rect.top - 6}px`;
@@ -95,26 +151,40 @@
 
   function update() {
     const now = Date.now();
+    const perf = performance.now();
 
     for (const c of counters) {
+      if (c.introStart === null) continue; // pas encore révélé à l'écran
       const raw = Math.max(0, rawValue(c.mode, c.base, c.ratePerMs, now));
-      const value = c.decimals
+      let value = c.decimals
         ? Math.floor(raw * 10 ** c.decimals) / 10 ** c.decimals
         : Math.floor(raw);
-      if (c.value !== null) {
-        const delta = value - c.value;
-        // delta négatif = remise à zéro de minuit : on repart de zéro.
-        c.accum = delta < 0 ? 0 : c.accum + delta;
+
+      // Décollage : le compteur monte de zéro à sa valeur réelle.
+      let intro = false;
+      if (c.introStart > 0) {
+        const t = (perf - c.introStart) / INTRO_MS;
+        if (t >= 1) c.introStart = 0;
+        else { intro = true; value = c.decimals ? value : Math.floor(value * easeOut(t)); }
       }
-      c.value = value;
-      if (c.pops && c.accum >= 1) spawnPop(c, Math.floor(c.accum), now);
+
+      if (!intro) {
+        if (c.value !== null) {
+          const delta = value - c.value;
+          // delta négatif = remise à zéro de minuit : on repart de zéro.
+          c.accum = delta < 0 ? 0 : c.accum + delta;
+        }
+        c.value = value;
+        if (c.pops && c.accum >= 1) spawnPop(c, Math.floor(c.accum), now);
+      }
 
       const shown = fmt(value, c.decimals);
       if (shown === c.shown) continue;
       const first = c.shown === null;
       c.shown = shown;
-      c.el.textContent = shown;
-      if (c.flash && !first) {
+      if (c.odo) renderOdo(c, shown);
+      else c.el.textContent = shown;
+      if (c.flash && !first && !intro) {
         c.el.classList.add('is-tick');
         clearTimeout(c.flashTimer);
         c.flashTimer = setTimeout(() => c.el.classList.remove('is-tick'), 450);
@@ -128,13 +198,83 @@
       const shown = h > 0 ? `${h} h ${pad(m)} min` : m > 0 ? `${m} min ${pad(s)} s` : `${s} s`;
       if (shown !== c.shown) { c.shown = shown; c.el.textContent = shown; }
     }
+
+    for (const m of meters) {
+      const elapsed = (now - startOfDay(now)) * m.ratePerMs;
+      m.el.style.width = `${((elapsed - Math.floor(elapsed)) * 100).toFixed(1)}%`;
+    }
   }
 
-  const clock = document.getElementById('clock-time');
+  /* — horloges + anneau de la journée écoulée — */
+  const clocks = document.querySelectorAll('.clock-time');
+  const dayRing = document.getElementById('day-ring');
+  const dayPct = document.getElementById('day-pct');
+  const waveLevel = document.querySelector('.wave-level');
   function updateClock() {
-    if (!clock) return;
-    const d = new Date(Date.now() + TZ_OFFSET_MS);
-    clock.textContent = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    const now = Date.now();
+    const d = new Date(now + TZ_OFFSET_MS);
+    const text = `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(d.getUTCSeconds())}`;
+    clocks.forEach((el) => { el.textContent = text; });
+    const frac = (now - startOfDay(now)) / 86_400_000;
+    if (dayRing) dayRing.style.strokeDashoffset = String(100 - frac * 100);
+    if (dayPct) dayPct.textContent = `${Math.round(frac * 100)} %`;
+    if (waveLevel) waveLevel.style.height = `${(12 + frac * 76).toFixed(2)}%`;
+  }
+
+  /* — la carte : le point rouge visite l'île — */
+  const mapPing = document.getElementById('map-ping');
+  const mapPlace = document.querySelector('.map-place');
+  const STOPS = [
+    { x: 373, y: 31, name: 'Saint-Denis', region: 'Nord · préfecture' },
+    { x: 160, y: 89, name: 'Route du Littoral', region: 'Ouest · RN1' },
+    { x: 411, y: 453, name: 'Les Cirques', region: 'Mafate · Cilaos · Salazie' },
+    { x: 721, y: 564, name: 'Piton de la Fournaise', region: 'Sud-Est · volcan' },
+    { x: 422, y: 789, name: 'Saint-Pierre', region: 'Sud · sous-préfecture' }
+  ];
+  let stopIndex = 0;
+  if (mapPing && mapPlace) {
+    const nameEl = mapPlace.querySelector('b');
+    const regionEl = mapPlace.querySelector('span');
+    setInterval(() => {
+      stopIndex = (stopIndex + 1) % STOPS.length;
+      const s = STOPS[stopIndex];
+      mapPing.style.transform = `translate(${s.x}px, ${s.y}px)`;
+      mapPlace.classList.add('swap');
+      setTimeout(() => {
+        nameEl.textContent = s.name;
+        regionEl.textContent = s.region;
+        mapPlace.classList.remove('swap');
+      }, 400);
+    }, 4200);
+  }
+
+  /* — apparition au scroll + décollage des compteurs — */
+  document.body.classList.add('js-anim');
+  const revealables = document.querySelectorAll('.cell, .live-card, .fact, .wm-table-wrap, .facts-title');
+  revealables.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${(i % 5) * 70}ms`; });
+  const started = (el) => {
+    for (const c of counters) {
+      if (c.introStart === null && el.contains(c.el)) {
+        c.introStart = reduceMotion ? 0 : performance.now();
+      }
+    }
+  };
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('in-view');
+        started(e.target);
+        io.unobserve(e.target);
+      }
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+    revealables.forEach((el) => io.observe(el));
+  } else {
+    revealables.forEach((el) => { el.classList.add('in-view'); started(el); });
+  }
+  // Les compteurs hors de tout bloc révélable (tableau, ticker) démarrent direct.
+  for (const c of counters) {
+    if (c.introStart === null && !c.el.closest('.reveal')) c.introStart = 0;
   }
 
   update();
