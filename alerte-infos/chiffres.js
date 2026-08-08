@@ -7,6 +7,7 @@
                                "year" → cumul depuis le 1er janvier
                                "abs"  → data-base + cumul depuis le 1er janvier 2026
               data-decimals  : décimales affichées (défaut 0)
+              data-unit      : unité affichée dans le « +N » flottant
    .countdown data-rate-year : temps estimé avant le prochain événement */
 (() => {
   'use strict';
@@ -18,6 +19,11 @@
   const BASE_EPOCH = Date.UTC(2025, 11, 31, 20, 0, 0);
   // En deçà de ~1 incrément toutes les 3 s, chaque tick est signalé en rouge.
   const TICK_FLASH_MAX_RATE = 10_000_000;
+  // Un « +N » flottant au plus tous les 700 ms par compteur, 24 à l'écran max.
+  const POP_INTERVAL_MS = 700;
+  const POP_MAX_ONSCREEN = 24;
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const fmts = {};
   const fmt = (n, d) => (fmts[d] ||= new Intl.NumberFormat('fr-FR', {
@@ -50,8 +56,13 @@
     ratePerMs: Number(el.dataset.rateYear) / YEAR_MS,
     base: Number(el.dataset.base || 0),
     decimals: Number(el.dataset.decimals || 0),
+    unit: el.dataset.unit || '',
     flash: Number(el.dataset.rateYear) < TICK_FLASH_MAX_RATE,
+    pops: !el.closest('.ticker'),
+    value: null,
     shown: null,
+    accum: 0,
+    lastPop: 0,
     flashTimer: 0
   }));
 
@@ -63,14 +74,42 @@
 
   const pad = (n) => String(n).padStart(2, '0');
 
+  // « +N » flottant : la petite récompense visuelle à chaque incrément.
+  function spawnPop(c, delta, now) {
+    if (reduceMotion || document.hidden) { c.accum = 0; return; }
+    if (now - c.lastPop < POP_INTERVAL_MS) return;
+    if (document.getElementsByClassName('tick-pop').length >= POP_MAX_ONSCREEN) { c.accum = 0; return; }
+    const rect = c.el.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > innerHeight) { c.accum = 0; return; }
+    const pop = document.createElement('span');
+    pop.className = 'tick-pop';
+    pop.textContent = `+${fmt(delta, 0)}${c.unit ? ' ' + c.unit : ''}`;
+    const x = Math.min(rect.right + 6 + (Math.random() * 14 - 7), innerWidth - 72);
+    pop.style.left = `${Math.max(8, x)}px`;
+    pop.style.top = `${rect.top - 6}px`;
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 950);
+    c.lastPop = now;
+    c.accum = 0;
+  }
+
   function update() {
     const now = Date.now();
 
     for (const c of counters) {
-      const value = Math.max(0, rawValue(c.mode, c.base, c.ratePerMs, now));
-      const shown = c.decimals
-        ? fmt(Math.floor(value * 10 ** c.decimals) / 10 ** c.decimals, c.decimals)
-        : fmt(Math.floor(value), 0);
+      const raw = Math.max(0, rawValue(c.mode, c.base, c.ratePerMs, now));
+      const value = c.decimals
+        ? Math.floor(raw * 10 ** c.decimals) / 10 ** c.decimals
+        : Math.floor(raw);
+      if (c.value !== null) {
+        const delta = value - c.value;
+        // delta négatif = remise à zéro de minuit : on repart de zéro.
+        c.accum = delta < 0 ? 0 : c.accum + delta;
+      }
+      c.value = value;
+      if (c.pops && c.accum >= 1) spawnPop(c, Math.floor(c.accum), now);
+
+      const shown = fmt(value, c.decimals);
       if (shown === c.shown) continue;
       const first = c.shown === null;
       c.shown = shown;
