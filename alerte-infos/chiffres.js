@@ -441,19 +441,57 @@
       }
     } },
 
-    // Un avion traverse — atterrissages à Roland-Garros.
-    plane: { every: 6800, tick(cell, layer) {
+    // Un avion arrive au-dessus de la carte, se pose sur la piste et roule
+    // jusqu'en bout — ombre au sol pour la profondeur, fumée au toucher.
+    plane: { every: 8200, kickoff: true, build(cell, layer) {
+      const strip = document.createElement('i');
+      strip.className = 'fx-runway';
+      layer.appendChild(strip);
+    }, tick(cell, layer) {
       const w = cell.clientWidth, h = cell.clientHeight;
+      const ground = h - 30;    // position du fuselage posé
+      const td = w * .52;       // point de toucher des roues
+      const D = 5200;
+      const ease = 'cubic-bezier(.35,.25,.35,1)';
       const p = document.createElement('span');
       p.className = 'fx-plane';
-      p.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>';
-      p.style.top = `${(h * .62).toFixed(0)}px`;
+      // Avion Lucide (le set d'icônes du design system), nez orienté sens du vol.
+      p.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="transform:rotate(45deg)"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>';
+      const sh = document.createElement('i');
+      sh.className = 'fx-plane-shadow';
+      layer.appendChild(sh);
       layer.appendChild(p);
       p.animate([
-        { transform: 'translate(-24px, 0) rotate(38deg)' },
-        { transform: `translate(${(w * .55).toFixed(0)}px, ${(-h * .3).toFixed(0)}px) rotate(52deg)` },
-        { transform: `translate(${w + 30}px, ${(-h * .42).toFixed(0)}px) rotate(58deg)` }
-      ], { duration: 4200, easing: 'cubic-bezier(.35,.1,.65,.9)' }).onfinish = () => p.remove();
+        { transform: `translate(-26px, ${(ground - h * .52).toFixed(0)}px) rotate(13deg)`, opacity: 0 },
+        { transform: `translate(4px, ${(ground - h * .47).toFixed(0)}px) rotate(13deg)`, opacity: 1, offset: .07 },
+        { transform: `translate(${(td * .8).toFixed(0)}px, ${(ground - 9).toFixed(0)}px) rotate(8deg)`, offset: .52 },
+        { transform: `translate(${td.toFixed(0)}px, ${ground}px) rotate(0deg)`, offset: .64 },
+        { transform: `translate(${(w * .86).toFixed(0)}px, ${ground}px) rotate(0deg)`, opacity: 1, offset: .94 },
+        { transform: `translate(${(w * .88).toFixed(0)}px, ${ground}px) rotate(0deg)`, opacity: 0 }
+      ], { duration: D, easing: ease }).onfinish = () => p.remove();
+      sh.animate([
+        { transform: `translate(-20px, ${ground + 18}px) scale(.45, .5)`, opacity: 0 },
+        { transform: `translate(${(td * .8 + 2).toFixed(0)}px, ${ground + 18}px) scale(.8, .8)`, opacity: .16, offset: .52 },
+        { transform: `translate(${(td + 2).toFixed(0)}px, ${ground + 18}px) scale(1, 1)`, opacity: .3, offset: .64 },
+        { transform: `translate(${(w * .86 + 2).toFixed(0)}px, ${ground + 18}px) scale(1, 1)`, opacity: .26, offset: .94 },
+        { transform: `translate(${(w * .88).toFixed(0)}px, ${ground + 18}px)`, opacity: 0 }
+      ], { duration: D, easing: ease }).onfinish = () => sh.remove();
+      setTimeout(() => {
+        if (!layer.isConnected) return;
+        for (let i = 0; i < 3; i++) {
+          const puff = document.createElement('i');
+          puff.className = 'fx-smoke';
+          puff.style.width = puff.style.height = `${rnd(4, 8).toFixed(0)}px`;
+          puff.style.background = 'rgba(155,151,151,.55)';
+          puff.style.left = `${(td + rnd(-4, 12)).toFixed(0)}px`;
+          puff.style.top = `${ground + 16}px`;
+          layer.appendChild(puff);
+          puff.animate([
+            { transform: 'translate(0,0) scale(.6)', opacity: .6 },
+            { transform: `translate(${rnd(-18, -6).toFixed(0)}px, ${rnd(-11, -4).toFixed(0)}px) scale(1.9)`, opacity: 0 }
+          ], { duration: 900, easing: 'ease-out' }).onfinish = () => puff.remove();
+        }
+      }, D * .64);
     } },
 
     // Le soleil péi tourne — et la nuit, la lune veille.
@@ -590,6 +628,10 @@
           if (!fxVisible.has(cell) || document.hidden) return;
           kind.tick(cell, layer, kind, state);
         }, kind.every);
+        // Certaines ambiances jouent une première fois sans attendre l'intervalle.
+        if (kind.kickoff) setTimeout(() => {
+          if (fxVisible.has(cell) && !document.hidden) kind.tick(cell, layer, kind, state);
+        }, 1300);
       }
     });
   }
