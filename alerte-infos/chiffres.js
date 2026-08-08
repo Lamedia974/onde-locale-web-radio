@@ -145,8 +145,28 @@
     pop.style.top = `${rect.top - 6}px`;
     document.body.appendChild(pop);
     setTimeout(() => pop.remove(), 950);
+    if ('confetti' in c.el.dataset) burst(rect);
     c.lastPop = now;
     c.accum = 0;
+  }
+
+  /* — confettis : un vrai événement (naissance, mariage, arrivée) se fête — */
+  function burst(rect) {
+    const colors = ['#ec3013', '#ff9783', '#201e1d'];
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement('i');
+      s.className = 'confetti';
+      s.style.background = colors[i % 3];
+      s.style.left = `${rect.left + rect.width / 2}px`;
+      s.style.top = `${rect.top + rect.height / 2}px`;
+      document.body.appendChild(s);
+      const a = Math.random() * Math.PI * 2;
+      const r = 26 + Math.random() * 44;
+      s.animate([
+        { transform: 'translate(0,0) rotate(0)', opacity: 1 },
+        { transform: `translate(${(Math.cos(a) * r).toFixed(0)}px, ${(Math.sin(a) * r - 26).toFixed(0)}px) rotate(${(Math.random() * 400 - 200).toFixed(0)}deg)`, opacity: 0 }
+      ], { duration: 800, easing: 'cubic-bezier(.16,1,.3,1)' }).onfinish = () => s.remove();
+    }
   }
 
   function update() {
@@ -275,6 +295,87 @@
   // Les compteurs hors de tout bloc révélable (tableau, ticker) démarrent direct.
   for (const c of counters) {
     if (c.introStart === null && !c.el.closest('.reveal')) c.introStart = 0;
+  }
+
+  /* — ambiances : chaque cellule vit selon sa nature — */
+  const ambient = !reduceMotion;
+  const ambientVisible = new WeakSet();
+  const ambientCells = document.querySelectorAll('.cell-pib, .cell-elec, .cell-water');
+  if (ambient && 'IntersectionObserver' in window) {
+    const aio = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) ambientVisible.add(e.target);
+        else ambientVisible.delete(e.target);
+      }
+    }, { threshold: .25 });
+    ambientCells.forEach((el) => aio.observe(el));
+  } else {
+    ambientCells.forEach((el) => ambientVisible.add(el));
+  }
+  const onScreen = (el) => el && ambientVisible.has(el) && !document.hidden;
+
+  // La pluie d'euros de la cellule PIB — un « € » par ≈ 640 € produits.
+  const pibCell = document.querySelector('.cell-pib');
+  if (ambient && pibCell) setInterval(() => {
+    if (!onScreen(pibCell)) return;
+    const d = document.createElement('span');
+    d.className = 'euro-drop';
+    d.textContent = '€';
+    d.style.left = `${(6 + Math.random() * 86).toFixed(1)}%`;
+    d.style.setProperty('--rot', `${(Math.random() * 240 - 120).toFixed(0)}deg`);
+    pibCell.appendChild(d);
+    setTimeout(() => d.remove(), 2100);
+  }, 900);
+
+  // Les éclairs génératifs de la cellule électricité — jamais deux identiques.
+  const elecCell = document.querySelector('.cell-elec');
+  const boltLayer = elecCell && elecCell.querySelector('.bolt-layer');
+  if (ambient && boltLayer) setInterval(() => {
+    if (!onScreen(elecCell)) return;
+    const pts = [];
+    let x = 12 + Math.random() * 76, y = -2;
+    while (y < 102) {
+      pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+      y += 11 + Math.random() * 15;
+      x += Math.random() * 26 - 13;
+    }
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    p.setAttribute('points', pts.join(' '));
+    boltLayer.appendChild(p);
+    setTimeout(() => p.remove(), 620);
+  }, 1500);
+
+  // Les gouttes qui tombent dans la vague de la cellule eau.
+  const waterCell = document.querySelector('.cell-water');
+  if (ambient && waterCell) setInterval(() => {
+    if (!onScreen(waterCell)) return;
+    const h = waterCell.clientHeight;
+    const level = waveLevel ? h * (parseFloat(waveLevel.style.height) || 30) / 100 : h * .3;
+    const fall = Math.max(20, h - level - 4);
+    const drop = document.createElement('i');
+    drop.className = 'water-drop';
+    drop.style.left = `${(8 + Math.random() * 84).toFixed(1)}%`;
+    waterCell.appendChild(drop);
+    drop.animate(
+      [{ transform: 'translateY(0)', opacity: .95 }, { transform: `translateY(${fall}px)`, opacity: 1 }],
+      { duration: 650, easing: 'cubic-bezier(.55,0,1,.45)' }
+    ).onfinish = () => {
+      drop.animate(
+        [{ transform: `translateY(${fall}px) scale(1)`, opacity: .8 }, { transform: `translateY(${fall}px) scale(3.2)`, opacity: 0 }],
+        { duration: 340, easing: 'ease-out' }
+      ).onfinish = () => drop.remove();
+    };
+  }, 1100);
+
+  // Le halo qui suit la souris dans chaque tuile.
+  if (ambient && matchMedia('(pointer: fine)').matches) {
+    document.addEventListener('pointermove', (e) => {
+      const cell = e.target.closest && e.target.closest('.cell, .live-card, .fact');
+      if (!cell) return;
+      const r = cell.getBoundingClientRect();
+      cell.style.setProperty('--mx', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`);
+      cell.style.setProperty('--my', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`);
+    }, { passive: true });
   }
 
   update();
