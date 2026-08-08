@@ -35,8 +35,16 @@
   };
   if (tiles) tiles.once('tileload', () => { tilesLoaded = true; ghostIle(); });
 
-  // Un seul canvas pour ~1 400 points : fluide même sur mobile.
-  const canvas = L.canvas({ padding: .3 });
+  // Pictogrammes des épingles — glyphes maison dans l'esprit Lucide du
+  // design system (fill currentColor, 24×24).
+  const GLYPHS = {
+    wc: '<b class="pin-wc">WC</b>',
+    eau: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c3.6 4.3 5.7 7 5.7 9.6a5.7 5.7 0 0 1-11.4 0C6.3 10 8.4 7.3 12 3z"/></svg>',
+    picnic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4.5 8.5h15M9.7 8.5l-3.4 11M14.3 8.5l3.4 11M6.9 14.5h10.2"/></svg>',
+    mairie: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 3.5 8.5h17L12 3zM5 10h2.4v6.2H5zm5.8 0h2.4v6.2h-2.4zm5.8 0H19v6.2h-2.4zM4 17.8h16v2.4H4z"/></svg>',
+    sante: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 4h5v5.5H20v5h-5.5V20h-5v-5.5H4v-5h5.5z"/></svg>',
+    ecole: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4 2.5 8.8 12 13.6l7.5-3.8v5h2v-6L12 4zM6.5 13v3.2c0 1.8 2.5 3.2 5.5 3.2s5.5-1.4 5.5-3.2V13L12 15.8 6.5 13z"/></svg>'
+  };
 
   const popup = (cat, name, meta) =>
     `<span class="pop-cat">${cat}</span><span class="pop-name">${name}</span>` +
@@ -65,36 +73,52 @@
         });
       }
     },
-    toilettes: { label: 'Toilettes publiques', sw: '#ec3013', on: true, cat: 'Toilettes publiques',
+    toilettes: { label: 'Toilettes publiques', sw: '#ec3013', on: true, cat: 'Toilettes publiques', icon: GLYPHS.wc,
       meta: (p) => [p.fee === 'yes' ? 'payantes' : p.fee === 'no' ? 'gratuites' : '', p.wc === 'yes' ? 'accès PMR' : ''].filter(Boolean).join(' · ') },
-    eau: { label: 'Eau potable', sw: '#201e1d', on: true, cat: 'Point d\'eau potable' },
-    picnic: { label: 'Aires de pique-nique', sw: '#ff9783', on: true, cat: 'Aire de pique-nique' },
-    mairies: { label: 'Mairies & annexes', sw: '#ae1800', on: true, cat: 'Mairie', r: 6 },
-    sante: { label: 'Hôpitaux & cliniques', sw: '#7c1405', on: true, cat: 'Santé', r: 6,
+    eau: { label: 'Eau potable', sw: '#201e1d', on: true, cat: 'Point d\'eau potable', icon: GLYPHS.eau },
+    picnic: { label: 'Aires de pique-nique', sw: '#ff7a60', on: true, cat: 'Aire de pique-nique', icon: GLYPHS.picnic },
+    mairies: { label: 'Mairies & annexes', sw: '#ae1800', on: true, cat: 'Mairie', icon: GLYPHS.mairie },
+    sante: { label: 'Hôpitaux & cliniques', sw: '#7c1405', on: true, cat: 'Santé', icon: GLYPHS.sante,
       meta: (p) => [p.type === 'hospital' ? 'hôpital' : p.type === 'clinic' ? 'clinique' : '', p.urg === 'yes' ? 'urgences' : ''].filter(Boolean).join(' · ') },
-    ecoles: { label: 'Écoles', sw: '#9b9797', on: false, cat: 'École', r: 4 }
+    ecoles: { label: 'Écoles', sw: '#9b9797', on: false, cat: 'École', icon: GLYPHS.ecole }
   };
 
   const groups = {};
   const rows = {};
   let total = 0;
 
+  // Épingles à pictogrammes, regroupées en grappes quand on dézoome.
   function pointLayer(gj, def) {
-    return L.geoJSON(gj, {
-      pointToLayer: (f, latlng) => L.circleMarker(latlng, {
-        renderer: canvas,
-        radius: def.r || 5,
-        fillColor: def.sw,
-        fillOpacity: .88,
-        color: '#ffffff',
-        weight: 1.4
-      }),
+    const cluster = L.markerClusterGroup({
+      maxClusterRadius: 46,
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      iconCreateFunction: (c) => {
+        const n = c.getChildCount();
+        const s = n < 10 ? 30 : n < 50 ? 37 : 45;
+        return L.divIcon({
+          className: '',
+          html: `<i class="poi-cluster" style="--c:${def.sw};width:${s}px;height:${s}px">${n}</i>`,
+          iconSize: [s, s]
+        });
+      }
+    });
+    const icon = L.divIcon({
+      className: '',
+      html: `<i class="poi-pin" style="--c:${def.sw}">${def.icon}</i>`,
+      iconSize: [28, 34],
+      iconAnchor: [14, 32],
+      popupAnchor: [0, -30]
+    });
+    cluster.addLayer(L.geoJSON(gj, {
+      pointToLayer: (f, latlng) => L.marker(latlng, { icon }),
       onEachFeature: (f, l) => {
         const p = f.properties;
         const meta = [def.meta && def.meta(p), p.op && esc(p.op)].filter(Boolean).join(' · ');
         l.bindPopup(popup(def.cat, esc(p.n || def.cat), meta));
       }
-    });
+    }));
+    return cluster;
   }
 
   // Données : soit injectées dans la page (window.CARTE_DATA), soit chargées
