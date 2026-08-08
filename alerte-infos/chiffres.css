@@ -349,7 +349,7 @@ a:hover { color: var(--color-accent); }
 .live-card-value {
   display: block; margin-top: 12px;
   font-family: var(--font-heading); font-weight: 800;
-  font-size: clamp(27px, 3.4vw, 38px); line-height: 1; letter-spacing: -.01em;
+  font-size: clamp(24px, 2.4vw, 31px); line-height: 1; letter-spacing: -.01em;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
