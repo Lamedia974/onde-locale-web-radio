@@ -565,6 +565,64 @@ main { padding-bottom: 8px; }
 }
 .cell:not(.cell-title):hover::after, .live-card:hover::after { opacity: 1; }
 
+/* — moteur d'ambiances : une couche d'effet par cellule marquée data-fx — */
+.fx-layer {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none; overflow: hidden;
+  border-radius: inherit;
+}
+[data-fx] > :not(.fx-layer):not(.bolt-layer) { position: relative; z-index: 2; }
+.fx-euro {
+  position: absolute; top: -18px;
+  font-family: var(--font-heading); font-weight: 800; font-size: 13px;
+  color: var(--color-accent-400);
+  animation: euro-fall 2s linear forwards;
+}
+.cell-dark .fx-euro, .cell-red .fx-euro, .live-grid .live-card:first-child .fx-euro { color: rgba(255, 255, 255, .5); }
+.fx-coin {
+  position: absolute; top: -12px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--color-accent-300), var(--color-accent-600));
+  animation: coin-fall 1.5s cubic-bezier(.45, 0, 1, .55) forwards;
+}
+@keyframes coin-fall {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--dx, 8px), 250px); opacity: 0; }
+}
+.fx-rain {
+  position: absolute; top: -14px;
+  width: 2px; height: 11px; border-radius: 2px;
+  background: var(--color-accent-300); opacity: .75;
+  animation: rain-fall .55s linear forwards;
+}
+@keyframes rain-fall { to { transform: translate(-14px, 260px); opacity: .2; } }
+.fx-drop {
+  position: absolute; top: -10px;
+  width: 6px; height: 9px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: var(--color-accent-300);
+}
+.fx-drop.fuel { width: 7px; height: 10px; background: var(--color-neutral-600); }
+.fx-smoke { position: absolute; border-radius: 50%; filter: blur(5px); }
+.fx-box { position: absolute; bottom: 9px; border-radius: 2px; }
+.fx-block { position: absolute; width: 9px; height: 9px; border-radius: 2px; background: var(--color-accent-500); }
+.fx-plane { position: absolute; left: 0; color: var(--color-neutral-500); }
+.fx-static { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fx-sky { top: auto; bottom: 0; height: 58%; }
+.fx-sun-rays { transform-origin: 74px 26px; animation: sun-spin 26s linear infinite; }
+@keyframes sun-spin { to { transform: rotate(360deg); } }
+.fx-star { animation: om-blink 2.6s ease-in-out infinite; }
+.fx-trace {
+  fill: none; stroke: var(--color-accent-300); stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 62 38;
+  animation: trace-run 6s linear infinite;
+}
+@keyframes trace-run { to { stroke-dashoffset: -100; } }
+.fx-peak { animation: om-blink 2.2s ease-in-out infinite; }
+.fact { position: relative; overflow: hidden; }
+
 /* — « +N » flottants — */
 .tick-pop {
   position: fixed; z-index: 999;
@@ -662,7 +720,9 @@ footer { background: #fff; border-top: 2px solid var(--color-text); }
 /* — mouvement réduit — */
 @media (prefers-reduced-motion: reduce) {
   .blink, .ping, .ticker-track, .heartbeat polyline, .wave-level svg,
-  .maskup, .island-path, .map-974, #map-ping { animation: none !important; }
+  .maskup, .island-path, .map-974, #map-ping,
+  .fx-euro, .fx-coin, .fx-rain, .fx-sun-rays, .fx-star, .fx-trace, .fx-peak { animation: none !important; }
+  .fx-layer, .bolt-layer { display: none; }
   .odo-strip, .cell, .fact, .live-card, .store-btn, .topbar-cta, #map-ping { transition: none !important; }
   .js-anim .reveal { opacity: 1; transform: none; }
   .cell:hover, .fact:hover, .live-card:hover { transform: none; }
