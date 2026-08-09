@@ -1,7 +1,7 @@
 /* La Réunion en chiffres — page stylesheet, version bento.
    Tokens repris du design system Modernist (splashscreen-alerte-r-union/project/_ds),
    assouplis en grille bento arrondie à la demande du client. */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap');
+/* Archivo est chargée depuis le HTML (preconnect + link) pour un premier rendu plus rapide. */
 
 :root {
   --color-bg: #f3f2f2;
@@ -698,7 +698,17 @@ main { padding-bottom: 8px; }
 }
 .sources b { color: var(--color-neutral-700); font-weight: 700; }
 
-footer { background: #fff; border-top: 2px solid var(--color-text); }
+footer { background: #fff; border-top: 2px solid var(--color-text); position: relative; }
+.js-anim footer.reveal { opacity: 1; transform: none; border-top-color: transparent; }
+.js-anim footer.reveal::before {
+  content: ""; position: absolute; top: -2px; left: 0; width: 100%; height: 2px;
+  background: var(--color-text);
+  transform: scaleX(0); transform-origin: left;
+}
+.js-anim footer.reveal.in-view::before {
+  transform: scaleX(1);
+  transition: transform 1s var(--ease-out) .1s;
+}
 .footer-inner {
   max-width: 1180px; margin: 0 auto;
   padding: 24px 20px max(24px, env(safe-area-inset-bottom));

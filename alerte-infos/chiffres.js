@@ -650,7 +650,9 @@
   /* — apparition au scroll + décollage des compteurs — */
   document.body.classList.add('js-anim');
   const revealables = document.querySelectorAll('.cell, .live-card, .fact, .wm-table-wrap, .facts-title, .sec-head');
+  const footRevs = document.querySelectorAll('footer, .footer-inner > *');
   revealables.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${(i % 5) * 70}ms`; });
+  footRevs.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${i * 70}ms`; });
   const started = (el) => {
     for (const c of counters) {
       if (c.introStart === null && el.contains(c.el)) {
@@ -668,8 +670,18 @@
       }
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
     revealables.forEach((el) => io.observe(el));
+    // le footer est en bout de page : pas de marge négative, sinon il ne se déclenche jamais
+    const ioFoot = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('in-view');
+        ioFoot.unobserve(e.target);
+      }
+    }, { threshold: .01 });
+    footRevs.forEach((el) => ioFoot.observe(el));
   } else {
     revealables.forEach((el) => { el.classList.add('in-view'); started(el); });
+    footRevs.forEach((el) => el.classList.add('in-view'));
   }
   // Les compteurs hors de tout bloc révélable (ticker) démarrent direct.
   for (const c of counters) {

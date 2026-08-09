@@ -1,5 +1,5 @@
 /* La carte du 974 — page stylesheet (design system Modernist, variante bento). */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap');
+/* Archivo est chargée depuis le HTML (preconnect + link) pour un premier rendu plus rapide. */
 
 :root {
   --color-bg: #f3f2f2;

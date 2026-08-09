@@ -9,6 +9,7 @@
     center: [-21.115, 55.532],
     zoom: 10,
     minZoom: 9,
+    maxZoom: 19, // requis par le clustering, même sans fond de tuiles
     maxBounds: [[-21.75, 54.8], [-20.5, 56.3]],
     zoomControl: true
   });
