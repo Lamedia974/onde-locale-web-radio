@@ -586,6 +586,9 @@ main { padding-bottom: 8px; }
 }
 @media (max-width: 760px) {
   .topbar-clock small { display: none; }
+}
+@media (max-width: 640px) {
+  .topbar-clock { display: none; }
   .sec-head { flex-direction: column-reverse; align-items: flex-start; gap: 10px; }
   .bento { grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(96px, auto); }
   .cell-span3, .cell-span2 { grid-column: span 2; }
@@ -597,6 +600,15 @@ main { padding-bottom: 8px; }
 @media (max-width: 520px) {
   .live-grid, .live-grid[data-cols="2"] { grid-template-columns: 1fr; }
   .live-grid .live-card, .live-grid .live-card:first-child { grid-column: span 1; }
+  .bento { gap: 10px; grid-auto-rows: minmax(88px, auto); }
+  .cell { padding: 14px 15px; }
+  .cell-big { font-size: clamp(38px, 11.5vw, 46px); }
+  .cell-value { font-size: clamp(20px, 6vw, 24px); }
+  .wm-table { min-width: 0; }
+  .wm-table-wrap { padding: 6px 14px 8px; }
+  .wm-table tbody th, .wm-table tbody td { padding: 13px 5px; }
+  .wm-table tbody td { font-size: 17px; }
+  .wm-table tbody th b { letter-spacing: .03em; }
 }
 
 /* — mouvement réduit — */
