@@ -413,20 +413,26 @@
       // — révélation au scroll des sections après l'île —
       document.body.classList.add('js-anim');
       const revealables = document.querySelectorAll('.sec-head, .feature, .module, .radio-banner, .poster-inner > *');
+      const footRevs = document.querySelectorAll('footer, .footer-inner > *');
       revealables.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${(i % 4) * 80}ms`; });
+      footRevs.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${i * 70}ms`; });
       if ('IntersectionObserver' in window && !reduce) {
-        const io = new IntersectionObserver((entries) => {
+        const seen = (io) => (entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
             e.target.classList.add('in-view');
             const el = e.target;
-            setTimeout(() => { el.style.transitionDelay = ''; }, 900);
+            setTimeout(() => { el.style.transitionDelay = ''; }, 1100);
             io.unobserve(el);
           }
-        }, { rootMargin: '0px 0px -10% 0px', threshold: .1 });
+        };
+        const io = new IntersectionObserver((es) => seen(io)(es), { rootMargin: '0px 0px -10% 0px', threshold: .1 });
         revealables.forEach((el) => io.observe(el));
+        // le footer est en bout de page : pas de marge négative, sinon il ne se déclenche jamais
+        const ioFoot = new IntersectionObserver((es) => seen(ioFoot)(es), { threshold: .01 });
+        footRevs.forEach((el) => ioFoot.observe(el));
       } else {
-        revealables.forEach((el) => { el.classList.add('in-view'); el.style.transitionDelay = ''; });
+        [...revealables, ...footRevs].forEach((el) => { el.classList.add('in-view'); el.style.transitionDelay = ''; });
       }
       function startTour() {
         const stage = document.getElementById('stage3d');
