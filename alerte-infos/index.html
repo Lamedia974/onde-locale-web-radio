@@ -371,10 +371,30 @@
         customElements.whenDefined('reunion-3d').then(() => {
           grid.hidden = true;
           tour.hidden = false;
+          document.body.classList.add('tour-on');
           const hint = document.querySelector('.scroll-hint');
           if (hint) hint.setAttribute('href', '#tour');
           startTour();
         });
+      }
+
+      // — révélation au scroll des sections après l'île —
+      document.body.classList.add('js-anim');
+      const revealables = document.querySelectorAll('.sec-head, .feature, .module, .radio-banner, .poster-inner > *');
+      revealables.forEach((el, i) => { el.classList.add('reveal'); el.style.transitionDelay = `${(i % 4) * 80}ms`; });
+      if ('IntersectionObserver' in window && !reduce) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            e.target.classList.add('in-view');
+            const el = e.target;
+            setTimeout(() => { el.style.transitionDelay = ''; }, 900);
+            io.unobserve(el);
+          }
+        }, { rootMargin: '0px 0px -10% 0px', threshold: .1 });
+        revealables.forEach((el) => io.observe(el));
+      } else {
+        revealables.forEach((el) => { el.classList.add('in-view'); el.style.transitionDelay = ''; });
       }
       function startTour() {
         const stage = document.getElementById('stage3d');
