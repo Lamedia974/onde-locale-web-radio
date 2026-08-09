@@ -511,22 +511,12 @@ main { padding-bottom: 8px; }
 }
 @keyframes map-fade { to { opacity: 1; } }
 
-/* la pluie d'euros de la cellule PIB */
-.euro-drop {
-  position: absolute; top: -18px; z-index: 1;
-  font-family: var(--font-heading); font-weight: 800; font-size: 13px;
-  color: rgba(255, 255, 255, .5);
-  pointer-events: none;
-  animation: euro-fall 2s linear forwards;
-}
 @keyframes euro-fall {
   0% { transform: translateY(0) rotate(0); opacity: 0; }
   12% { opacity: 1; }
   82% { opacity: .9; }
   100% { transform: translateY(250px) rotate(var(--rot, 90deg)); opacity: 0; }
 }
-.cell-pib > :not(.euro-drop) { position: relative; z-index: 2; }
-
 /* les éclairs génératifs de la cellule électricité */
 .bolt-layer { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
 .bolt-layer polyline {
@@ -537,17 +527,6 @@ main { padding-bottom: 8px; }
   animation: bolt-flash .55s ease-out forwards;
 }
 @keyframes bolt-flash { 0% { opacity: 1; } 100% { opacity: 0; } }
-.cell-elec > :not(.bolt-layer) { position: relative; z-index: 2; }
-
-/* les gouttes qui tombent dans la vague */
-.cell-water .water-drop {
-  position: absolute; top: -10px; z-index: 1;
-  width: 6px; height: 9px;
-  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
-  background: var(--color-accent-300);
-  pointer-events: none;
-}
-
 /* les confettis des vrais événements (naissances, mariages, touristes) */
 .confetti {
   position: fixed; z-index: 999;
