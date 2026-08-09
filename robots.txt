@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lamedia974.github.io/onde-locale-web-radio/sitemap.xml
+Sitemap: https://onde-locale-974.netlify.app/sitemap.xml

@@ -1,8 +1,8 @@
 # Onde Locale & Alerte Infos Réunion
 
-Site statique sans étape de build, déployé automatiquement sur **GitHub Pages** :
+Site statique sans étape de build, déployé sur **Netlify** :
 
-**https://lamedia974.github.io/onde-locale-web-radio/**
+**https://onde-locale-974.netlify.app/**
 
 | Page | URL | Rôle |
 | --- | --- | --- |
@@ -12,17 +12,17 @@ Site statique sans étape de build, déployé automatiquement sur **GitHub Pages
 | La carte du 974 | `/alerte-infos/carte.html` | Carte interactive open data (sentiers GR, toilettes, eau, équipements) |
 
 La navigation est croisée entre toutes les pages (topbars et footers), en liens
-relatifs — le site fonctionne aussi bien sous un sous-chemin GitHub Pages que
-sur un domaine racine.
+relatifs — le site fonctionne aussi bien sous un sous-chemin que sur un domaine
+racine.
 
 ## Déploiement
 
-`.github/workflows/pages.yml` publie la racine du dépôt sur GitHub Pages à
-chaque push sur `main` (source « GitHub Actions », activée automatiquement par
-le workflow). Aucune étape de build : le dépôt **est** le site.
+`netlify.toml` publie la racine du dépôt telle quelle (`publish = "."`, aucune
+commande de build) : le dépôt **est** le site. Netlify sert aussi les URLs sans
+extension (`/alerte-infos/chiffres` comme `/alerte-infos/chiffres.html`).
 
-Pour un domaine personnalisé : Settings → Pages → Custom domain, puis mettre à
-jour les URLs de `robots.txt` et `sitemap.xml`.
+Pour un domaine personnalisé : Netlify → Domain management, puis mettre à jour
+les URLs de `robots.txt` et `sitemap.xml`.
 
 ## Lancer en local
 
@@ -35,7 +35,7 @@ fichiers en `fetch` : il faut un serveur HTTP, pas un simple `file://`.)
 
 ## SEO
 
-- `robots.txt` et `sitemap.xml` à la racine, pointés sur l'URL GitHub Pages.
+- `robots.txt` et `sitemap.xml` à la racine, pointés sur l'URL Netlify.
 - Chaque page porte title/description uniques, Open Graph, `theme-color` et des
   données structurées JSON-LD (RadioStation, SoftwareApplication, Dataset).
 - Archivo est chargée via `preconnect` + `<link>` (pas d'`@import` bloquant).
