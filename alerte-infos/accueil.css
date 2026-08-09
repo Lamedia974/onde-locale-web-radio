@@ -351,6 +351,59 @@ body.tour-on main {
   font-size: 9.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
 }
 
+/* — les cartes vivent : icônes animées — */
+.features .feature:nth-child(1) .feature-ico svg, .tour-card:nth-of-type(1) .feature-ico svg {
+  transform-origin: 50% 12%; animation: ico-swing 2.6s ease-in-out infinite;
+}
+.features .feature:nth-child(2) .feature-ico svg, .tour-card:nth-of-type(2) .feature-ico svg {
+  animation: ico-drive 1.8s ease-in-out infinite;
+}
+.features .feature:nth-child(3) .feature-ico svg, .tour-card:nth-of-type(3) .feature-ico svg {
+  animation: ico-stream 2.2s ease-in-out infinite;
+}
+.features .feature:nth-child(4) .feature-ico svg, .tour-card:nth-of-type(4) .feature-ico svg {
+  transform-origin: 50% 88%; animation: ico-flicker 1.3s ease-in-out infinite;
+}
+.features .feature:nth-child(5) .feature-ico svg, .tour-card:nth-of-type(5) .feature-ico svg {
+  animation: ico-tilt 3s ease-in-out infinite;
+}
+@keyframes ico-swing { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(13deg); } 45% { transform: rotate(-10deg); } 65% { transform: rotate(5deg); } 80% { transform: rotate(-2deg); } }
+@keyframes ico-drive { 0%, 100% { transform: translate(-1.6px, 0); } 25% { transform: translate(0, -.8px); } 50% { transform: translate(1.6px, 0); } 75% { transform: translate(0, .5px); } }
+@keyframes ico-stream { 0%, 100% { transform: translateX(-1.5px); opacity: 1; } 50% { transform: translateX(1.8px); opacity: .55; } }
+@keyframes ico-flicker { 0%, 100% { transform: scale(1, 1); } 30% { transform: scale(1.06, .95); } 55% { transform: scale(.96, 1.08); } 75% { transform: scale(1.04, .98); } }
+@keyframes ico-tilt { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+
+/* l'île du module carte se trace en boucle, ping sur Saint-Denis */
+.module-map-bg .isle-trace {
+  fill: none; stroke: var(--color-accent); stroke-width: 9;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 16 84;
+  animation: trace-run 7s linear infinite;
+}
+@keyframes trace-run { to { stroke-dashoffset: -100; } }
+.module-map-bg .isle-ping {
+  transform-box: fill-box; transform-origin: center;
+  animation: om-ping 2.2s cubic-bezier(.16, 1, .3, 1) infinite;
+}
+@keyframes om-ping { 0% { transform: scale(.2); opacity: .95; } 75% { opacity: 0; } 100% { transform: scale(1); opacity: 0; } }
+
+/* la pluie de € du module chiffres */
+.module > .fx-euro {
+  position: absolute; top: -18px; z-index: 0;
+  font-family: var(--font-heading); font-weight: 800; font-size: 13px;
+  color: rgba(255, 255, 255, .42);
+  pointer-events: none;
+  animation: euro-fall 2.1s linear forwards;
+}
+@keyframes euro-fall {
+  0% { transform: translateY(0) rotate(0); opacity: 0; }
+  12% { opacity: 1; }
+  82% { opacity: .9; }
+  100% { transform: translateY(280px) rotate(var(--rot, 90deg)); opacity: 0; }
+}
+.module-live b { transition: color .4s ease; }
+.module-live b.is-tick { color: var(--color-accent-400); transition: none; }
+
 /* radio */
 .radio-banner {
   display: flex; align-items: center; gap: clamp(16px, 3vw, 30px); flex-wrap: wrap;
@@ -364,6 +417,10 @@ body.tour-on main {
   background: #040607; color: #2fe0d1;
   display: flex; align-items: center; justify-content: center;
 }
+.radio-ico svg path { animation: wave-pulse 2s ease-in-out infinite; }
+.radio-ico svg path:nth-of-type(2), .radio-ico svg path:nth-of-type(3) { animation-delay: .18s; }
+.radio-ico svg path:nth-of-type(1), .radio-ico svg path:nth-of-type(4) { animation-delay: .36s; }
+@keyframes wave-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 .radio-banner-copy { flex: 1; min-width: 240px; }
 .radio-banner h3 {
   margin: 0;
@@ -431,5 +488,7 @@ footer { background: #fff; border-top: 2px solid var(--color-text); position: re
 @media (prefers-reduced-motion: reduce) {
   .kicker, .hero-lede, .store-row, .scroll-hint, .hero-phone, .maskup { animation: none; }
   .kicker i, .blink, .scroll-hint svg, .hero-phone-float { animation: none; }
+  .feature-ico svg, .isle-trace, .isle-ping, .radio-ico svg path, .module > .fx-euro { animation: none !important; }
   .feature, .module, .store-btn, .topbar-cta, .radio-cta, .module-cta { transition: none; }
+  .js-anim .reveal { opacity: 1; transform: none; }
 }
