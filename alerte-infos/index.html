@@ -19,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap">
     <link rel="stylesheet" href="accueil.css">
+    <script type="module" src="reunion-3d.js"></script>
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -154,6 +155,51 @@
     </header>
 
     <div class="rule"></div>
+
+    <div id="tour" class="tour-track" hidden>
+      <div class="tour-stage">
+        <reunion-3d id="stage3d"></reunion-3d>
+        <div class="tour-veil" id="tour-veil" aria-hidden="true"></div>
+        <div class="tour-hud" aria-hidden="true">
+          <div class="tour-hud-left">
+            <div class="tour-region" id="hud-region">Nord</div>
+            <div class="tour-name" id="hud-name">Saint-Denis</div>
+          </div>
+          <div class="tour-hud-num"><span id="hud-num">01</span><em>/05</em></div>
+        </div>
+
+        <article class="tour-card">
+          <span class="tour-card-head"><i class="feature-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></i><b>Alertes locales</b><em>Push · 17:42</em></span>
+          <h3>Notifié avant tout le monde</h3>
+          <p>Vigilances, routes coupées, coupures d'eau : l'alerte part dès que la rédaction publie, uniquement pour vos communes.</p>
+        </article>
+        <article class="tour-card">
+          <span class="tour-card-head"><i class="feature-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></i><b>Trafic</b><em>RN1 · Direct</em></span>
+          <h3>Basculement ? Vous le saviez déjà</h3>
+          <p>Route du Littoral, radiers, bouchons : l'état des routes de l'île minute par minute, de La Possession à Saint-Denis.</p>
+        </article>
+        <article class="tour-card">
+          <span class="tour-card-head"><i class="feature-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/></svg></i><b>Météo & cyclones</b><em>Vigilance orange</em></span>
+          <h3>La saison cyclonique sous contrôle</h3>
+          <p>Trajectoires, niveaux d'alerte et consignes officielles — suivies en continu, des cirques au littoral.</p>
+        </article>
+        <article class="tour-card">
+          <span class="tour-card-head"><i class="feature-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></i><b>Volcan</b><em>Alerte 1 · OVPF</em></span>
+          <h3>Éruption : suivez le direct</h3>
+          <p>Sismicité, accès à l'enclos, points presse : le Piton de la Fournaise sous surveillance, en temps réel.</p>
+        </article>
+        <article class="tour-card">
+          <span class="tour-card-head"><i class="feature-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg></i><b>Événements</b><em>Agenda péi</em></span>
+          <h3>L'agenda péi dans la poche</h3>
+          <p>Sakifo, fêtes de quartier, sport : ce qui se passe près de chez vous, trié par commune.</p>
+        </article>
+        <article class="tour-card tour-card-dl">
+          <span class="tour-card-label">Gratuit · iOS & Android</span>
+          <h3>L'île dans<br>votre poche.</h3>
+          <a href="#dl" class="module-cta">Télécharger l'appli →</a>
+        </article>
+      </div>
+    </div>
 
     <main>
       <section class="sec ground" id="app">
@@ -310,6 +356,68 @@
       };
       tick();
       setInterval(tick, 200);
+
+      // — le survol 3D de l'île au scroll (comme la maquette) —
+      // Activé seulement si le module three + WebGL répondent ; sinon la
+      // grille de fonctionnalités statique reste en place.
+      const tour = document.getElementById('tour');
+      const grid = document.getElementById('app');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const canWebGL = (() => {
+        try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); }
+        catch { return false; }
+      })();
+      if (tour && grid && canWebGL && !reduce && window.customElements) {
+        customElements.whenDefined('reunion-3d').then(() => {
+          grid.hidden = true;
+          tour.hidden = false;
+          const hint = document.querySelector('.scroll-hint');
+          if (hint) hint.setAttribute('href', '#tour');
+          startTour();
+        });
+      }
+      function startTour() {
+        const stage = document.getElementById('stage3d');
+        const veil = document.getElementById('tour-veil');
+        const hudR = document.getElementById('hud-region');
+        const hudN = document.getElementById('hud-name');
+        const hudNum = document.getElementById('hud-num');
+        const cards = Array.from(tour.querySelectorAll('.tour-card'));
+        const STOPS = [
+          ['01', 'Saint-Denis', 'Nord'],
+          ['02', 'Route du Littoral', 'Ouest · RN1'],
+          ['03', 'Les Cirques', 'Mafate · Cilaos · Salazie'],
+          ['04', 'Piton de la Fournaise', 'Sud-Est · Volcan'],
+          ['05', 'Saint-Pierre', 'Sud'],
+          ['05', 'La Réunion', 'Disponible maintenant']
+        ];
+        let cur = 0, active = -1;
+        const tick3d = () => {
+          requestAnimationFrame(tick3d);
+          const r = tour.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > innerHeight) return;
+          const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+          const handoff = Math.min(1, Math.max(0, -r.top / (innerHeight * .42)));
+          veil.style.opacity = String(1 - handoff);
+          veil.style.transform = `translateY(${(-handoff * 64).toFixed(1)}px)`;
+          const target = Math.min(1, p / .84) * (STOPS.length - 1);
+          cur += (target - cur) * .11;
+          if (Math.abs(target - cur) < .001) cur = target;
+          if (stage.setProgress) stage.setProgress(cur);
+          const a = Math.min(5, Math.round(cur));
+          if (a === active) return;
+          active = a;
+          const s = STOPS[a];
+          hudNum.textContent = s[0]; hudN.textContent = s[1]; hudR.textContent = s[2];
+          cards.forEach((c, i) => {
+            const on = i === a;
+            c.style.opacity = on ? '1' : '0';
+            c.style.transform = on ? 'none' : (i < a ? 'translateY(-18px)' : 'translateY(26px)');
+            c.style.pointerEvents = on ? 'auto' : 'none';
+          });
+        };
+        tick3d();
+      }
     })();
     </script>
   </body>
