@@ -34,7 +34,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }
 body {
   margin: 0;
   color: var(--color-text);
@@ -119,6 +119,16 @@ footer { background: #fff; border-top: 2px solid var(--color-text); position: re
 .js-anim footer.reveal.in-view::before {
   transform: scaleX(1);
   transition: transform 1s var(--ease-out) .1s;
+}
+
+/* — mobile : la marque sur sa ligne, la nav en dessous — */
+@media (max-width: 640px) {
+  .topbar { flex-wrap: wrap; gap: 0 11px; padding-bottom: 8px; }
+  .brand-name { flex-basis: calc(100% - 39px); }
+  .topbar-link { padding: 12px 3px; }
+  .topbar-cta { margin-left: auto; padding: 10px 13px; }
+  .footer-inner { gap: 12px 18px; }
+  .footer-inner a { padding: 8px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
