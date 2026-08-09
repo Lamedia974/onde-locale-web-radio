@@ -151,7 +151,7 @@ reunion-3d { position: absolute; inset: 0; }
   opacity: 1; transform: none;
   transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
 }
-.js-anim .module.reveal.in-view, .js-anim .feature.reveal.in-view, .js-anim .radio-banner.reveal.in-view {
+.js-anim .module.reveal.in-view, .js-anim .feature.reveal.in-view {
   transition: opacity .6s var(--ease-out), transform .35s var(--ease-out), box-shadow .35s var(--ease-out);
 }
 
@@ -327,39 +327,6 @@ body.tour-on main {
 .module-live b { transition: color .4s ease; }
 .module-live b.is-tick { color: var(--color-accent-400); transition: none; }
 
-/* radio */
-.radio-banner {
-  display: flex; align-items: center; gap: clamp(16px, 3vw, 30px); flex-wrap: wrap;
-  background: #fff;
-  border: var(--cell-border); border-radius: var(--r-lg);
-  box-shadow: var(--cell-shadow);
-  padding: clamp(20px, 3vw, 30px);
-}
-.radio-ico {
-  width: 54px; height: 54px; flex: none; border-radius: 16px;
-  background: #040607; color: #2fe0d1;
-  display: flex; align-items: center; justify-content: center;
-}
-.radio-ico svg path { animation: wave-pulse 2s ease-in-out infinite; }
-.radio-ico svg path:nth-of-type(2), .radio-ico svg path:nth-of-type(3) { animation-delay: .18s; }
-.radio-ico svg path:nth-of-type(1), .radio-ico svg path:nth-of-type(4) { animation-delay: .36s; }
-@keyframes wave-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
-.radio-banner-copy { flex: 1; min-width: 240px; }
-.radio-banner h3 {
-  margin: 0;
-  font-family: var(--font-heading); font-weight: 800;
-  font-size: clamp(18px, 2.4vw, 24px); text-transform: uppercase; letter-spacing: -.01em;
-}
-.radio-banner p { margin: 6px 0 0; font-size: 12.5px; color: var(--color-neutral-600); }
-.radio-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 2px solid var(--color-text); border-radius: 99px;
-  font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
-  padding: 11px 18px;
-  transition: background .2s, color .2s, transform .25s var(--ease-out);
-}
-.radio-cta:hover { background: var(--color-text); color: #fff; transform: translateY(-2px); }
-
 /* — bandeau rouge — */
 .poster { background: var(--color-accent); color: #fff; position: relative; z-index: 2; }
 .poster-inner { max-width: 1180px; margin: 0 auto; padding: clamp(52px, 7vw, 84px) 20px; }
@@ -397,7 +364,7 @@ body.tour-on main {
 @media (prefers-reduced-motion: reduce) {
   .kicker, .hero-lede, .store-row, .scroll-hint, .hero-phone, .maskup { animation: none; }
   .kicker i, .blink, .scroll-hint svg, .hero-phone-float { animation: none; }
-  .feature-ico svg, .isle-trace, .isle-ping, .radio-ico svg path, .module > .fx-euro { animation: none !important; }
-  .feature, .module, .store-btn, .topbar-cta, .radio-cta, .module-cta { transition: none; }
+  .feature-ico svg, .isle-trace, .isle-ping, .module > .fx-euro { animation: none !important; }
+  .feature, .module, .store-btn, .topbar-cta, .module-cta { transition: none; }
   .js-anim .reveal { opacity: 1; transform: none; }
 }
