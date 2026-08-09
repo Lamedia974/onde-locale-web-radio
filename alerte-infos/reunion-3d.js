@@ -110,9 +110,12 @@ customElements.define('reunion-3d', class extends HTMLElement {
   setProgress(f) { this._progress = f; }
   async _start(canvas) {
     let dem = null;
+    // Le relief réel ne doit jamais bloquer l'île : au-delà de 9 s (réseau
+    // coupé, CSP, S3 injoignable), on passe au relief procédural.
+    const demTimeout = new Promise((_, rej) => setTimeout(() => rej(new Error('DEM timeout')), 9000));
     const [gj] = await Promise.all([
-      (await fetch(GEO)).json(),
-      loadDEM().then(f => { dem = f; }).catch(e => console.warn('r3d: DEM offline, procedural relief', e))
+      window.ILE_GEOJSON ? Promise.resolve(window.ILE_GEOJSON) : fetch(GEO).then(r => r.json()),
+      Promise.race([loadDEM(), demTimeout]).then(f => { dem = f; }).catch(e => console.warn('r3d: DEM offline, procedural relief', e))
     ]);
     const polys = gj.geometry.coordinates;
     let ring = polys[0][0].length > polys[1][0].length ? polys[0][0] : polys[1][0];
