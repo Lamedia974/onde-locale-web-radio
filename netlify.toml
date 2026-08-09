@@ -9,6 +9,20 @@
   status = 301
   force = true
 
+# Feuilles de l'ancienne web radio : retirées du dépôt, mais le cache de build
+# Netlify continue de les servir — on les rend introuvables explicitement.
+[[redirects]]
+  from = "/styles.css"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/script.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
