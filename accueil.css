@@ -39,10 +39,24 @@ body { background: #fff; }
   transition: background .2s, transform .25s var(--ease-out);
 }
 .store-btn:hover { background: var(--color-accent); color: #fff; transform: translateY(-2px); }
+/* l'appli n'est pas encore publiée : les boutons ne sont pas cliquables */
+.store-btn.is-soon { cursor: default; opacity: .58; }
+.store-btn.is-soon:hover { background: var(--color-text); color: #fff; transform: none; }
+.poster .store-btn.is-soon:hover { background: transparent; color: #fff; }
 .store-btn svg { display: block; flex: none; }
 .store-btn span { display: flex; flex-direction: column; text-align: left; }
 .store-btn em { font-style: normal; font-size: 8px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
 .store-btn strong { font-size: 13px; font-weight: 800; line-height: 1.1; }
+.soon-line {
+  margin: 16px 0 0; max-width: 46ch;
+  font-size: 12.5px; line-height: 1.55; color: var(--color-neutral-600);
+  animation: om-rise 1s var(--ease-out) .58s both;
+}
+.soon-line b {
+  font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  font-size: 10px; color: var(--color-accent);
+}
+.soon-line a { text-decoration: underline; text-underline-offset: 2px; }
 .scroll-hint {
   display: flex; align-items: center; gap: 9px; width: max-content;
   margin-top: 36px;
